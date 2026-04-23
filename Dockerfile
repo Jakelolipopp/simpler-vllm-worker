@@ -14,7 +14,11 @@ ENV HF_HOME=/root/.cache/huggingface
 ENV MODEL_PATH=/models/${MODEL_ID}
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# CRITICAL FIX: Forcefully purge any stale apt lists from the Docker cache 
+# before updating to prevent Debian/Ubuntu package conflicts.
+RUN rm -rf /var/lib/apt/lists/* && \
+    apt-get clean && \
+    apt-get update && apt-get install -y --no-install-recommends \
     python3 python3-pip curl ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
